@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+</head>
+
+<body>
+    <div class="container" id="app">
+        <H2>校內網路應用競賽Scratch作品上傳</H2>
+        <br/>
+        <h3>
+        <a href="example.zip" download> 題目下載 </a>
+        </h3>
+        <br/>
+        <form method="POST" enctype="multipart/form-data" action="/">
+            <div class="form-group">
+                <label>組別</label>
+                <select v-model="selectedGroup">
+                    <option v-for="item in contestGroups" v-bind:value="item">
+                        {{ item }}
+                    </option>
+                </select>
+                <label>班級</label>
+                <select v-model="classinfo">
+                    <option v-for="item in items" v-bind:value="item">
+                        {{ item.className }}
+                    </option>
+                </select>
+                <!-- {{classinfo}} -->
+                <label>座號</label>
+                <select v-model="seatno">
+                    <option v-for="seatnumber in classinfo.seatCollections" v-bind:value="seatnumber">
+                        {{ seatnumber }}
+                    </option>
+                </select>
+                <input v-model="username" type="hidden" name="username" value="">
+                <input v-model="dirname" type="hidden" name="dirname" value="">
+            </div>
+            {{selectedUsername}}
+            <div class="form-group">
+                <label>身份識別： {{username}}</label>
+            </div>
+            <div class="form-group">
+                <label class="btn btn-default btn-file">
+                    選取檔案
+                    <input @change="onFileChange" type="file" name="file" style="display: none;">
+                </label>
+                {{ filename }}
+                <input v-if="filename.length != 0" type="submit" class="btn btn-info" value="上傳" />
+            </div>
+        </form>
+        <div th:if="${message}">
+            <h2 th:text="${message}" />
+        </div>
+    </div>
+    </div>
+    <footer>
+        <script>
+        Vue.prototype.$http = axios;
+        var app = new Vue({
+            el: '#app',
+            data: {
+                url: 'classinfo',
+                contestGroups: ["程式組", "動畫組"],
+                selectedGroup: '',
+                classinfo: {},
+                seatno: '',
+                username: '',
+                dirname: '',
+                filename: '',
+                items: {}
+            },
+            computed: {
+                selectedUsername: function() {
+                    console.log(this.classinfo.classNo);
+                    if (this.classinfo.classNo != undefined) {
+                        // this.username = this.selectedGroup + this.classinfo.classNo;
+                        this.username = this.selectedGroup + this.classinfo.classNo;
+                    }
+                    if (this.seatno.length != 0) {
+                        this.username = this.selectedGroup + this.classinfo.classNo + this.seatno
+                        this.dirname = this.classinfo.classNo + this.seatno
+                    }
+                }
+            },
+            created: function() {
+                // `this` points to the vm instance
+
+                var config = {
+                    headers: {
+                        'content-type': 'application/json;CHARSET=UTF-8'
+                    }
+                };
+
+                let vm = this;
+                this.$http.get(this.url, config)
+                    .then((response) => {
+                        // success callback
+                        vm.items = response.data;
+                        console.log(vm.items);
+
+
+                    }, (response) => {
+                        // error callback
+                    });
+
+            },
+            methods: {
+                onFileChange(e) {
+                    let files = e.target.files || e.dataTransfer.files;
+                    if (!files.length)
+                        return;
+                    console.log(files[0].name);
+                    this.filename = files[0].name;
+                    // this.createImage(files[0]);
+                },
+            }
+        })
+        </script>
+    </footer>
+</body>
+
+</html>
