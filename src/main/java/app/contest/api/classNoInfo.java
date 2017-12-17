@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class classNoInfo {
 
-    @Value("${name}")
-    private String name;
+//    @Value("${name}")
+//    private String name;
 
     private static final Logger logger = LoggerFactory.getLogger(classNoInfo.class);
     private ArrayList<ClassInfo> classCollections = new ArrayList<>();
@@ -32,7 +32,7 @@ public class classNoInfo {
 
     @RequestMapping("/classinfo")
     public ArrayList<ClassInfo> getClassNo() throws JsonProcessingException {
-        logger.info("get name:" + this.name);
+//        logger.info("get name:" + this.name);
         classCollections.clear();
         String[] classnos = new String[7];
         classnos[0] = "甲";

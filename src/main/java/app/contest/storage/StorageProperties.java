@@ -18,17 +18,20 @@ public class StorageProperties {
 
     private final Logger logger = LoggerFactory.getLogger(StorageProperties.class);
 
-    private String location = "/home/contest/";
+  
+    private String location;
+//    private String location = "/home/contest/";
 //    private String location = "C:\\app";
 //    private String location = System.getProperty("java.io.tmpdir");
+    public StorageProperties() {
 
+    }
 
     public String getLocation() {
-        return location;
+        return this.location;
     }
 
     public void setLocation(String location) {
         this.location = location;
     }
-
 }

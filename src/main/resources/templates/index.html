@@ -28,9 +28,9 @@
         <form method="POST" enctype="multipart/form-data" action="/">
             <div class="form-group">
                 <label>組別</label>
-                <select v-model="selectedGroup">
-                    <option v-for="item in contestGroups" v-bind:value="item">
-                        {{ item }}
+                <select v-model="selectedProject">
+                    <option v-for="projectname in projectNames" v-bind:value="projectname">
+                        {{ projectname }}
                     </option>
                 </select>
                 <label>班級</label>
@@ -46,8 +46,9 @@
                         {{ seatnumber }}
                     </option>
                 </select>
+                <input v-model="savedFileName" type="hidden" name="savedFileName" value="">
+                <input v-model="selectedProject" type="hidden" name="projectname" value="">
                 <input v-model="username" type="hidden" name="username" value="">
-                <input v-model="dirname" type="hidden" name="dirname" value="">
             </div>
             {{selectedUsername}}
             <div class="form-group">
@@ -58,55 +59,102 @@
                     選取檔案
                     <input @change="onFileChange" type="file" name="file" style="display: none;">
                 </label>
-                {{ filename }}
-                <input v-if="filename.length != 0" type="submit" class="btn btn-info" value="上傳" />
+                <!-- {{ filename }} -->
+                <input v-if="selectedFilename.length != 0" type="submit" class="btn btn-info" value="上傳" />
             </div>
         </form>
         <div th:if="${message}">
             <h2 th:text="${message}" />
         </div>
-    </div>
+        <div>
+            <hr style="height:2px; border:none; color:rgb(60,90,180); background-color:rgb(60,90,180);">
+            <!-- {{ userFilesList }} -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>已上傳檔案</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in userFilesList.filesList">
+                        <td>{{ item }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <footer>
         <script>
         Vue.prototype.$http = axios;
+        let config = {
+            headers: {
+                'content-type': 'application/json;CHARSET=UTF-8'
+            }
+        };
         var app = new Vue({
             el: '#app',
             data: {
-                url: 'classinfo',
-                contestGroups: ["程式組", "動畫組"],
-                selectedGroup: '',
+                projectNames: [],
+                selectedProject: '',
                 classinfo: {},
                 seatno: '',
+                savedFileName: '',
                 username: '',
                 dirname: '',
-                filename: '',
+                selectedFilename: '',
+                userFilesList: {},
                 items: {}
             },
             computed: {
                 selectedUsername: function() {
                     console.log(this.classinfo.classNo);
                     if (this.classinfo.classNo != undefined) {
-                        // this.username = this.selectedGroup + this.classinfo.classNo;
-                        this.username = this.selectedGroup + this.classinfo.classNo;
+                        this.username = this.classinfo.classNo;
+                        this.savedFileName = this.selectedProject + this.classinfo.classNo;
                     }
+
+
                     if (this.seatno.length != 0) {
-                        this.username = this.selectedGroup + this.classinfo.classNo + this.seatno
-                        this.dirname = this.classinfo.classNo + this.seatno
+                        this.savedFileName = this.selectedProject + this.classinfo.classNo + this.seatno
+                        this.username = this.classinfo.classNo + this.seatno
+
+                        console.log('line 121')
+                        let url = this.username + '/listfiles'
+                        let vm = this;
+                        this.$http.get(url, config)
+                            .then((response) => {
+                                // success callback
+                                console.log(response.data);
+                                this.userFilesList = response.data;
+
+
+                            }, (response) => {
+                                // error callback
+                            });
                     }
                 }
             },
             created: function() {
                 // `this` points to the vm instance
 
-                var config = {
-                    headers: {
-                        'content-type': 'application/json;CHARSET=UTF-8'
-                    }
-                };
+                let url = 'projectnames'
 
                 let vm = this;
-                this.$http.get(this.url, config)
+                this.$http.get(url, config)
+                    .then((response) => {
+                        // success callback
+                        vm.projectNames = response.data;
+                        console.log(vm.projectNames);
+
+                    }, (response) => {
+                        // error callback
+                    });
+
+
+
+                url = 'classinfo'
+
+                this.$http.get(url, config)
                     .then((response) => {
                         // success callback
                         vm.items = response.data;
@@ -124,7 +172,7 @@
                     if (!files.length)
                         return;
                     console.log(files[0].name);
-                    this.filename = files[0].name;
+                    this.selectedFilename = files[0].name;
                     // this.createImage(files[0]);
                 },
             }

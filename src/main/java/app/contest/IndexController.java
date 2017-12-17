@@ -5,7 +5,6 @@
  */
 package app.contest;
 
-import app.contest.api.classNoInfo;
 import app.contest.storage.StorageFileNotFoundException;
 import app.contest.storage.StorageService;
 import org.slf4j.Logger;
@@ -26,36 +25,38 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 public class IndexController {
-
+    
     private final StorageService storageService;
-  private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
- 
+    private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
+    
     @Autowired
     public IndexController(StorageService storageService) {
         this.storageService = storageService;
     }
-
+    
     @RequestMapping("/")
     public String index() {
+        
         return "index";
     }
-
+    
     @PostMapping("/")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
-            RedirectAttributes redirectAttributes, @RequestParam(value="username", defaultValue="unknown") String username, @RequestParam(value="dirname",defaultValue="unknown") String dirname) {
-    
-         logger.info("dirname:"+ dirname);
-        storageService.store(file, username,dirname);
-
+            RedirectAttributes redirectAttributes, @RequestParam(value = "savedFileName", defaultValue = "unknown") String savedFileName, @RequestParam(value = "username", defaultValue = "unknown") String username, @RequestParam(value = "projectname", defaultValue = "unknown") String projectname) {
+        
+        logger.info("dirname:" + username);
+        logger.info("project name:" + projectname);
+        storageService.store(file, savedFileName, username);
+        
         redirectAttributes.addFlashAttribute("message",
-                "您已成功上傳檔案 " + username + file.getOriginalFilename() + "!");
-
+                "您已成功上傳檔案 " + savedFileName + file.getOriginalFilename());
+        
         return "redirect:/";
     }
-
+    
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
         return ResponseEntity.notFound().build();
     }
-
+    
 }
