@@ -27,7 +27,7 @@ public class ListFilesController {
     @Value("${storage.location}")
     private String storageLocation;
     
-    @Value("#{'${project.name}'.split(',')}")
+    @Value("#{'${project.names}'.split(',')}")
     private String[] projectNames;
     
     @RequestMapping(method = RequestMethod.GET)
@@ -38,7 +38,7 @@ public class ListFilesController {
             logger.info("projectName:" + projectName);
         }
         
-        UserFilesList userFilesList = new UserFilesList(userid, this.storageLocation);
+        UserFilesList userFilesList = new UserFilesList(userid, this.storageLocation,projectNames);
 //        userFilesList.getFilesCollection();
         return userFilesList;
     }

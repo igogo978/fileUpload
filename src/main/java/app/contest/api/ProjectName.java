@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ProjectName {
 
-    @Value("#{'${project.name}'.split(',')}")
+    @Value("#{'${project.names}'.split(',')}")
     private String[] projectNames;
 
     @RequestMapping("/projectnames")

@@ -30,12 +30,15 @@ public class UserFilesList {
     private ArrayList<String> filesList = new ArrayList<String>();
     private String userid;
     private String storageLocation;
+    private String[] projectNames;
     private static final Logger logger = LoggerFactory.getLogger(UserFilesList.class);
 
-    public UserFilesList(String userid, String storageLocation) {
+    public UserFilesList(String userid, String storageLocation, String[] projectNames) {
         this.userid = userid;
         this.storageLocation = storageLocation;
-
+        this.projectNames = projectNames;
+        //預計改為 /storageLocation/projectName/5201/files
+        
         if (Files.exists(Paths.get(storageLocation, userid))) {
             logger.info("directory exists." + userid);
             try {
