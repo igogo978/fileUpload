@@ -5,11 +5,6 @@
  */
 package app.contest.model;
 
-import app.contest.IndexController;
-import app.contest.api.classNoInfo;
-import app.contest.storage.StorageException;
-import app.contest.storage.StorageProperties;
-import app.contest.storage.StorageService;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -17,9 +12,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 
 /**
  *

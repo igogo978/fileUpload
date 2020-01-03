@@ -24,6 +24,12 @@
         <h3>
             <!--\contest\src\main\resources\static\程式組題目.zip-->
         <!--<a href="程式組題目.zip" download>  程式組題目下載 </a> &nbsp;&nbsp;&nbsp;&nbsp;   <a href="動畫組題目.zip" download>  動畫組題目下載 </a>-->
+            <div v-if="client">
+                <a href="/exam/download" class="btn btn-primary stretched-link">程式組題目下載</a>
+            </div>
+            <div v-else>
+
+            </div>
         </h3>
         <br/>
         <form method="POST" enctype="multipart/form-data" action="/">
@@ -85,7 +91,8 @@
         </div>
     </div>
     <footer>
-        <script>
+        <script th:inline="javascript">
+        /*<![CDATA[*/
         Vue.prototype.$http = axios;
         let config = {
             headers: {
@@ -95,6 +102,7 @@
         var app = new Vue({
             el: '#app',
             data: {
+                client: /*[[${client}]]*/ 'default',
                 projectNames: [],
                 selectedProject: '',
                 classinfo: {},
@@ -178,6 +186,7 @@
                 },
             }
         })
+           /*]]>*/
         </script>
     </footer>
 </body>
